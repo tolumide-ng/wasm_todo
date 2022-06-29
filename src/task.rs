@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use uuid::Uuid;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -14,16 +16,26 @@ pub(crate) enum TaskWorth {
     High,
 }
 
+impl Display for TaskWorth {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Low => { write!(f, "1") },
+            Self::Mid => { write!(f, "2") }
+            Self::High => { write!(f, "3") },
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Eq)]
-pub(crate) struct Task {
+pub struct Task {
     title: String,
     status: TaskStatus,
-    worth: TaskWorth,
-    id: Uuid,
+    pub(crate) worth: TaskWorth,
+    pub(crate) id: Uuid,
 }
 
 impl Task {
-    pub fn new(title: String, worth: TaskWorth) -> Self {
+    pub(crate) fn new(title: String, worth: TaskWorth) -> Self {
         Self { 
             title, 
             status: TaskStatus::Todo,
@@ -32,7 +44,7 @@ impl Task {
         }
     }
 
-    pub fn start(&mut self) {
+    pub(crate) fn start(&mut self) {
         if self.status != TaskStatus::Todo {
             return;
         }
@@ -40,7 +52,7 @@ impl Task {
         self.status = TaskStatus::Active;
     }
 
-    pub fn finish(&mut self) {
+    pub(crate) fn finish(&mut self) {
         if self.status != TaskStatus::Active {
             return;
         }
